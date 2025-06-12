@@ -1,3 +1,3 @@
 package com.miniyt.dto.response;
 
-public record ApiResponse(String message, boolean success) {}
+public record ApiResponse(Object message, boolean success) {}

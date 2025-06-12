@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 @Entity
 @Table(
@@ -31,6 +32,9 @@ public class User implements UserDetails {
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @OneToMany(mappedBy = "user")
+    private List<Video> video;
 
     public Long getId() {
         return id;
@@ -70,6 +74,14 @@ public class User implements UserDetails {
 
     public void setRole(Role role) {
         this.role = role;
+    }
+
+    public List<Video> getVideo() {
+        return video;
+    }
+
+    public void setVideo(List<Video> video) {
+        this.video = video;
     }
 
     @Override
