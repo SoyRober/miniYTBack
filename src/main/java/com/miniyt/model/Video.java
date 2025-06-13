@@ -15,6 +15,9 @@ public class Video {
 
     private byte[] thumbnail;
 
+    @Column(name = "video_path")
+    private String videoPath;
+
     @ManyToOne
     private User user;
 
@@ -57,5 +60,13 @@ public class Video {
 
     public void setThumbnail(byte[] thumbnail) {
         this.thumbnail = thumbnail;
+    }
+
+    public String getVideoPath() {
+        return videoPath;
+    }
+
+    public void setVideoPath(String videoPath) {
+        this.videoPath = videoPath;
     }
 }
