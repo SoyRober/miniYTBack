@@ -1,5 +1,6 @@
 package com.miniyt.service;
 
+import com.miniyt.dto.request.VideoUploadRequest;
 import com.miniyt.dto.response.VideoResponse;
 import com.miniyt.exception.NonExistentEntityException;
 import com.miniyt.model.User;
@@ -42,14 +43,12 @@ public class VideoService {
                 .collect(Collectors.toList());
     }
 
-    public String upload(MultipartFile videoFile, Principal user) throws IOException {
-        if (videoFile.isEmpty()) throw new NonExistentEntityException("There is no video to upload");
-
+    public String upload(VideoUploadRequest videoUploadRequest, Principal user) throws IOException {
         String uuid = UUID.randomUUID().toString();
-        String originalFileName = uuid + "_" + videoFile.getOriginalFilename();
+        String originalFileName = uuid + "_" + videoUploadRequest.getTitle();
         Path originalFilePath = Paths.get("upload/videos/" + originalFileName);
         Files.createDirectories(originalFilePath.getParent());
-        Files.write(originalFilePath, videoFile.getBytes());
+        Files.write(originalFilePath, videoUploadRequest.getFile().getBytes());
 
         String mp4FileName = uuid + ".mp4";
         Path mp4FilePath = Paths.get("upload/videos/" + mp4FileName);

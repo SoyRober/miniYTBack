@@ -1,5 +1,6 @@
 package com.miniyt.controller;
 
+import com.miniyt.dto.request.VideoUploadRequest;
 import com.miniyt.dto.response.ApiResponse;
 import com.miniyt.model.Video;
 import com.miniyt.service.VideoService;
@@ -35,10 +36,10 @@ public class VideoController {
     }
 
     @PostMapping("/user/video/upload")
-    public ResponseEntity<ApiResponse> uploadUserVideo(@RequestParam("video") MultipartFile videoFile, Principal user)
+    public ResponseEntity<ApiResponse> uploadUserVideo(@RequestBody VideoUploadRequest videoUploadRequest, Principal user)
             throws IOException {
         return ResponseEntity.ok(
-                new ApiResponse(videoService.upload(videoFile, user),
+                new ApiResponse(videoService.upload(videoUploadRequest, user),
                         true
                 )
         );
