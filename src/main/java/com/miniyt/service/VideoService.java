@@ -37,7 +37,8 @@ public class VideoService {
                         video.getId(),
                         video.getTitle(),
                         video.getDescription(),
-                        video.getThumbnail() != null ? Base64.getEncoder().encodeToString(video.getThumbnail()) : ""
+                        video.getThumbnail() != null ? Base64.getEncoder().encodeToString(video.getThumbnail()) : "",
+                        video.getVideoPath()
                 ))
                 .collect(Collectors.toList());
     }

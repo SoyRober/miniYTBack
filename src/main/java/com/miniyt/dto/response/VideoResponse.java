@@ -9,11 +9,14 @@ public class VideoResponse {
 
     private String thumbnail;
 
-    public VideoResponse(long id, String title, String description, String thumbnail) {
+    private String videoPath;
+
+    public VideoResponse(long id, String title, String description, String thumbnail, String videoPath) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.thumbnail = thumbnail;
+        this.videoPath = videoPath;
     }
 
     public long getId() {
@@ -46,5 +49,13 @@ public class VideoResponse {
 
     public void setThumbnail(String thumbnail) {
         this.thumbnail = thumbnail;
+    }
+
+    public String getVideoPath() {
+        return videoPath;
+    }
+
+    public void setVideoPath(String videoPath) {
+        this.videoPath = videoPath;
     }
 }
