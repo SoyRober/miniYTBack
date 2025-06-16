@@ -1,6 +1,7 @@
 package com.miniyt.controller;
 
 import com.miniyt.dto.response.ApiResponse;
+import com.miniyt.model.Video;
 import com.miniyt.service.VideoService;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
@@ -43,12 +44,14 @@ public class VideoController {
         );
     }
 
-    @GetMapping("/public/video/stream/{videopath}")
+    @GetMapping("/public/video/stream/{uuid}")
     public ResponseEntity<Resource> streamVideo(
-            @PathVariable String videopath,
+            @PathVariable String uuid,
             @RequestHeader(value = "Range", required = false) String rangeHeader) throws IOException {
 
-        File videoFile = new File("upload/videos/" + videopath);
+        Video currentVideo = videoService.getVideoByUuid(uuid);
+
+        File videoFile = new File(currentVideo.getVideoPath());
         long fileLength = videoFile.length();
         long rangeStart = 0;
         long rangeEnd = fileLength - 1;

@@ -34,11 +34,10 @@ public class VideoService {
         List<Video> videos = videoRepo.findAll();
         return videos.stream()
                 .map(video -> new VideoResponse(
-                        video.getId(),
+                        video.getUuid(),
                         video.getTitle(),
                         video.getDescription(),
-                        video.getThumbnail() != null ? Base64.getEncoder().encodeToString(video.getThumbnail()) : "",
-                        video.getVideoPath()
+                        video.getThumbnail() != null ? Base64.getEncoder().encodeToString(video.getThumbnail()) : ""
                 ))
                 .collect(Collectors.toList());
     }
@@ -46,16 +45,17 @@ public class VideoService {
     public String upload(MultipartFile videoFile, Principal user) throws IOException {
         if (videoFile.isEmpty()) throw new NonExistentEntityException("There is no video to upload");
 
-        String originalFileName = UUID.randomUUID() + "_" + videoFile.getOriginalFilename();
+        String uuid = UUID.randomUUID().toString();
+        String originalFileName = uuid + "_" + videoFile.getOriginalFilename();
         Path originalFilePath = Paths.get("upload/videos/" + originalFileName);
         Files.createDirectories(originalFilePath.getParent());
         Files.write(originalFilePath, videoFile.getBytes());
 
-        String mp4FileName = originalFileName.replaceAll("\\.[^.]+$", "") + ".mp4";
+        String mp4FileName = uuid + ".mp4";
         Path mp4FilePath = Paths.get("upload/videos/" + mp4FileName);
 
         if (!originalFileName.toLowerCase().endsWith(".mp4")) {
-            converFileToMp4(originalFilePath, mp4FilePath);
+            convertFileToMp4(originalFilePath, mp4FilePath);
         } else {
             Files.move(originalFilePath, mp4FilePath);
         }
@@ -64,6 +64,7 @@ public class VideoService {
                 .orElseThrow(() -> new NonExistentEntityException("This user does not exist"));
 
         Video newVideo = new Video();
+        newVideo.setUuid(uuid);
         newVideo.setUser(currentUser);
         newVideo.setThumbnail("".getBytes());
         newVideo.setDescription("NewVideo");
@@ -72,10 +73,10 @@ public class VideoService {
 
         videoRepo.save(newVideo);
 
-        return "Video subido y convertido a MP4 correctamente";
+        return "Video uploaded successfully: " + mp4FileName;
     }
 
-    private static void converFileToMp4(Path originalFilePath, Path mp4FilePath) throws IOException {
+    private static void convertFileToMp4(Path originalFilePath, Path mp4FilePath) throws IOException {
         ProcessBuilder pb = new ProcessBuilder(
                 "ffmpeg", "-i", originalFilePath.toString(),
                 "-c:v", "libopenh264", "-c:a", "aac", mp4FilePath.toString()
@@ -84,11 +85,16 @@ public class VideoService {
         Process process = pb.start();
         try {
             int exitCode = process.waitFor();
-            if (exitCode != 0) throw new IOException("Error al convertir el video a MP4");
+            if (exitCode != 0) throw new IOException("Error while converting to mp4");
             Files.delete(originalFilePath);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
-            throw new IOException("Conversión interrumpida", e);
+            throw new IOException("Conversion interrupted", e);
         }
+    }
+
+    public Video getVideoByUuid(String uuid) {
+        return videoRepo.findByUuid(uuid)
+                .orElseThrow(() -> new NonExistentEntityException("This video does not exist"));
     }
 }

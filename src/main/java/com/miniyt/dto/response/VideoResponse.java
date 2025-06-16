@@ -1,7 +1,7 @@
 package com.miniyt.dto.response;
 
 public class VideoResponse {
-    private long id;
+    private String uuid;
 
     private String title;
 
@@ -9,22 +9,19 @@ public class VideoResponse {
 
     private String thumbnail;
 
-    private String videoPath;
-
-    public VideoResponse(long id, String title, String description, String thumbnail, String videoPath) {
-        this.id = id;
+    public VideoResponse(String uuid, String title, String description, String thumbnail) {
+        this.uuid = uuid;
         this.title = title;
         this.description = description;
         this.thumbnail = thumbnail;
-        this.videoPath = videoPath;
     }
 
-    public long getId() {
-        return id;
+    public String getUuid() {
+        return uuid;
     }
 
-    public void setId(long id) {
-        this.id = id;
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 
     public String getTitle() {
@@ -49,13 +46,5 @@ public class VideoResponse {
 
     public void setThumbnail(String thumbnail) {
         this.thumbnail = thumbnail;
-    }
-
-    public String getVideoPath() {
-        return videoPath;
-    }
-
-    public void setVideoPath(String videoPath) {
-        this.videoPath = videoPath;
     }
 }

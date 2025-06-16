@@ -18,6 +18,8 @@ public class Video {
     @Column(name = "video_path")
     private String videoPath;
 
+    private String uuid;
+
     @ManyToOne
     private User user;
 
@@ -68,5 +70,13 @@ public class Video {
 
     public void setVideoPath(String videoPath) {
         this.videoPath = videoPath;
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 }
