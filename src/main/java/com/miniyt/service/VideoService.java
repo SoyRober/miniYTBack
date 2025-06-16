@@ -46,24 +46,49 @@ public class VideoService {
     public String upload(MultipartFile videoFile, Principal user) throws IOException {
         if (videoFile.isEmpty()) throw new NonExistentEntityException("There is no video to upload");
 
-        String fileName = UUID.randomUUID() + "_" + videoFile.getOriginalFilename();
-        Path filePath = Paths.get("upload/videos/" + fileName);
-        Files.createDirectories(filePath.getParent());
-        Files.write(filePath, videoFile.getBytes());
+        String originalFileName = UUID.randomUUID() + "_" + videoFile.getOriginalFilename();
+        Path originalFilePath = Paths.get("upload/videos/" + originalFileName);
+        Files.createDirectories(originalFilePath.getParent());
+        Files.write(originalFilePath, videoFile.getBytes());
+
+        String mp4FileName = originalFileName.replaceAll("\\.[^.]+$", "") + ".mp4";
+        Path mp4FilePath = Paths.get("upload/videos/" + mp4FileName);
+
+        if (!originalFileName.toLowerCase().endsWith(".mp4")) {
+            converFileToMp4(originalFilePath, mp4FilePath);
+        } else {
+            Files.move(originalFilePath, mp4FilePath);
+        }
 
         User currentUser = userRepo.findByUsername(user.getName())
                 .orElseThrow(() -> new NonExistentEntityException("This user does not exist"));
-        System.out.println("user = " + user.getName());
 
         Video newVideo = new Video();
         newVideo.setUser(currentUser);
         newVideo.setThumbnail("".getBytes());
         newVideo.setDescription("NewVideo");
         newVideo.setTitle("NewVideo");
-        newVideo.setVideoPath(filePath.toString());
-        
+        newVideo.setVideoPath(mp4FilePath.toString());
+
         videoRepo.save(newVideo);
-        
-        return "Video uploaded successfully";
+
+        return "Video subido y convertido a MP4 correctamente";
+    }
+
+    private static void converFileToMp4(Path originalFilePath, Path mp4FilePath) throws IOException {
+        ProcessBuilder pb = new ProcessBuilder(
+                "ffmpeg", "-i", originalFilePath.toString(),
+                "-c:v", "libopenh264", "-c:a", "aac", mp4FilePath.toString()
+        );
+        pb.inheritIO();
+        Process process = pb.start();
+        try {
+            int exitCode = process.waitFor();
+            if (exitCode != 0) throw new IOException("Error al convertir el video a MP4");
+            Files.delete(originalFilePath);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new IOException("Conversión interrumpida", e);
+        }
     }
 }

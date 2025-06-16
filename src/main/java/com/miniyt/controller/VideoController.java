@@ -66,7 +66,7 @@ public class VideoController {
         inputStream.skip(rangeStart);
 
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", "video/mkv");
+        headers.add("Content-Type", "video/mp4");
         headers.add("Accept-Ranges", "bytes");
         headers.add("Content-Range", "bytes " + rangeStart + "-" + rangeEnd + "/" + fileLength);
 
