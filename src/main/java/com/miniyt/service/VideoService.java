@@ -43,12 +43,12 @@ public class VideoService {
                 .collect(Collectors.toList());
     }
 
-    public String upload(VideoUploadRequest videoUploadRequest, Principal user) throws IOException {
+    public String upload(MultipartFile file, VideoUploadRequest videoUploadRequest, Principal user) throws IOException {
         String uuid = UUID.randomUUID().toString();
         String originalFileName = uuid + "_" + videoUploadRequest.getTitle();
         Path originalFilePath = Paths.get("upload/videos/" + originalFileName);
         Files.createDirectories(originalFilePath.getParent());
-        Files.write(originalFilePath, videoUploadRequest.getFile().getBytes());
+        Files.write(originalFilePath, file.getBytes());
 
         String mp4FileName = uuid + ".mp4";
         Path mp4FilePath = Paths.get("upload/videos/" + mp4FileName);
@@ -66,8 +66,8 @@ public class VideoService {
         newVideo.setUuid(uuid);
         newVideo.setUser(currentUser);
         newVideo.setThumbnail("".getBytes());
-        newVideo.setDescription("NewVideo");
-        newVideo.setTitle("NewVideo");
+        newVideo.setDescription(videoUploadRequest.getDescription());
+        newVideo.setTitle(videoUploadRequest.getTitle());
         newVideo.setVideoPath(mp4FilePath.toString());
 
         videoRepo.save(newVideo);
@@ -78,7 +78,7 @@ public class VideoService {
     private static void convertFileToMp4(Path originalFilePath, Path mp4FilePath) throws IOException {
         ProcessBuilder pb = new ProcessBuilder(
                 "ffmpeg", "-i", originalFilePath.toString(),
-                "-c:v", "libopenh264", "-c:a", "aac", mp4FilePath.toString()
+                "-c:v", "libx264", "-c:a", "aac", mp4FilePath.toString()
         );
         pb.inheritIO();
         Process process = pb.start();

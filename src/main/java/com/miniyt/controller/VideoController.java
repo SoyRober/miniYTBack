@@ -4,9 +4,11 @@ import com.miniyt.dto.request.VideoUploadRequest;
 import com.miniyt.dto.response.ApiResponse;
 import com.miniyt.model.Video;
 import com.miniyt.service.VideoService;
+import jakarta.validation.Valid;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -35,13 +37,13 @@ public class VideoController {
         );
     }
 
-    @PostMapping("/user/video/upload")
-    public ResponseEntity<ApiResponse> uploadUserVideo(@RequestBody VideoUploadRequest videoUploadRequest, Principal user)
-            throws IOException {
+    @PostMapping(value = "/user/video/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ApiResponse> uploadUserVideo(
+            @RequestPart("file") MultipartFile file,
+            @RequestPart("data") @Valid VideoUploadRequest videoUploadRequest,
+            Principal user) throws IOException {
         return ResponseEntity.ok(
-                new ApiResponse(videoService.upload(videoUploadRequest, user),
-                        true
-                )
+                new ApiResponse(videoService.upload(file, videoUploadRequest, user), true)
         );
     }
 

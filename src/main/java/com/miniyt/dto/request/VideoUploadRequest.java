@@ -11,14 +11,10 @@ public class VideoUploadRequest {
 
     private String thumbnail;
 
-    @NotNull
-    private MultipartFile file;
-
-    public VideoUploadRequest(String title, String description, String thumbnail, MultipartFile file) {
+    public VideoUploadRequest(String title, String description, String thumbnail) {
         this.title = title;
         this.description = description;
         this.thumbnail = thumbnail;
-        this.file = file;
     }
 
     public String getTitle() {
@@ -45,11 +41,4 @@ public class VideoUploadRequest {
         this.thumbnail = thumbnail;
     }
 
-    public MultipartFile getFile() {
-        return file;
-    }
-
-    public void setFile(MultipartFile file) {
-        this.file = file;
-    }
 }
