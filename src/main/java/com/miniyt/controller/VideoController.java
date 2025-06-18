@@ -49,6 +49,13 @@ public class VideoController {
         );
     }
 
+    @GetMapping("/public/video/{uuid}")
+    public ResponseEntity<ApiResponse> getVideo(@PathVariable String uuid) {
+        return ResponseEntity.ok(
+                new ApiResponse(videoService.getVideo(uuid), true)
+        );
+    }
+
     @GetMapping("/public/video/stream/{uuid}")
     public ResponseEntity<Resource> streamVideo(
             @PathVariable String uuid,

@@ -96,4 +96,15 @@ public class VideoService {
         return videoRepo.findByUuid(uuid)
                 .orElseThrow(() -> new NonExistentEntityException("This video does not exist"));
     }
+
+    public VideoResponse getVideo(String uuid) {
+        return videoRepo.findByUuid(uuid)
+                .map(video -> new VideoResponse(
+                        video.getUuid(),
+                        video.getTitle(),
+                        video.getDescription(),
+                        null
+                ))
+                .orElseThrow(() -> new NonExistentEntityException("This video does not exist"));
+    }
 }
