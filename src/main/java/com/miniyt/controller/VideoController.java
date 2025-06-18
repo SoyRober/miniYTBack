@@ -4,6 +4,7 @@ import com.miniyt.dto.request.VideoUploadRequest;
 import com.miniyt.dto.response.ApiResponse;
 import com.miniyt.model.Video;
 import com.miniyt.service.VideoService;
+import jakarta.persistence.PreUpdate;
 import jakarta.validation.Valid;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
@@ -41,9 +42,10 @@ public class VideoController {
     public ResponseEntity<ApiResponse> uploadUserVideo(
             @RequestPart("file") MultipartFile file,
             @RequestPart("data") @Valid VideoUploadRequest videoUploadRequest,
+            @RequestPart("thumbnail") MultipartFile thumbnail,
             Principal user) throws IOException {
         return ResponseEntity.ok(
-                new ApiResponse(videoService.upload(file, videoUploadRequest, user), true)
+                new ApiResponse(videoService.upload(file, videoUploadRequest, thumbnail, user), true)
         );
     }
 

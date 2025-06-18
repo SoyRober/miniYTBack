@@ -13,6 +13,8 @@ public class Video {
     @Column(columnDefinition="TEXT")
     private String description;
 
+    @Lob
+    @Column(columnDefinition = "LONGBLOB")
     private byte[] thumbnail;
 
     @Column(name = "video_path")

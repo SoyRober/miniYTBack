@@ -43,7 +43,7 @@ public class VideoService {
                 .collect(Collectors.toList());
     }
 
-    public String upload(MultipartFile file, VideoUploadRequest videoUploadRequest, Principal user) throws IOException {
+    public String upload(MultipartFile file, VideoUploadRequest videoUploadRequest, MultipartFile thumbnail, Principal user) throws IOException {
         String uuid = UUID.randomUUID().toString();
         String originalFileName = uuid + "_" + videoUploadRequest.getTitle();
         Path originalFilePath = Paths.get("upload/videos/" + originalFileName);
@@ -65,7 +65,7 @@ public class VideoService {
         Video newVideo = new Video();
         newVideo.setUuid(uuid);
         newVideo.setUser(currentUser);
-        newVideo.setThumbnail("".getBytes());
+        newVideo.setThumbnail(thumbnail.getBytes());
         newVideo.setDescription(videoUploadRequest.getDescription());
         newVideo.setTitle(videoUploadRequest.getTitle());
         newVideo.setVideoPath(mp4FilePath.toString());
