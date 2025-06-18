@@ -42,7 +42,7 @@ public class VideoController {
     public ResponseEntity<ApiResponse> uploadUserVideo(
             @RequestPart("file") MultipartFile file,
             @RequestPart("data") @Valid VideoUploadRequest videoUploadRequest,
-            @RequestPart("thumbnail") MultipartFile thumbnail,
+            @RequestPart(value = "thumbnail", required = false) MultipartFile thumbnail,
             Principal user) throws IOException {
         return ResponseEntity.ok(
                 new ApiResponse(videoService.upload(file, videoUploadRequest, thumbnail, user), true)

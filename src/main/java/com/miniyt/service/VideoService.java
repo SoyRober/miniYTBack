@@ -73,7 +73,7 @@ public class VideoService {
         Video newVideo = new Video();
         newVideo.setUuid(uuid);
         newVideo.setUser(currentUser);
-        newVideo.setThumbnail(thumbnail.getBytes());
+        newVideo.setThumbnail(thumbnail != null ? thumbnail.getBytes() : null);
         newVideo.setDescription(videoUploadRequest.getDescription());
         newVideo.setTitle(videoUploadRequest.getTitle());
         newVideo.setVideoPath(mp4FilePath.toString());
