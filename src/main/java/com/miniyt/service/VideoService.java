@@ -31,8 +31,15 @@ public class VideoService {
         this.userRepo = userRepo;
     }
 
-    public List<VideoResponse> search() {
-        List<Video> videos = videoRepo.findAll();
+    public List<VideoResponse> search(String searchTerm) {
+        System.out.println("searchTerm = " + searchTerm);
+        List<Video> videos;
+        if(searchTerm == null || searchTerm.isEmpty()) {
+            videos = videoRepo.findAll();
+        } else  {
+            videos = videoRepo.findByTitleContainingIgnoreCase(searchTerm);
+        }
+
         return videos.stream()
                 .map(video -> new VideoResponse(
                         video.getUuid(),
@@ -43,7 +50,8 @@ public class VideoService {
                 .collect(Collectors.toList());
     }
 
-    public String upload(MultipartFile file, VideoUploadRequest videoUploadRequest, MultipartFile thumbnail, Principal user) throws IOException {
+    public String upload(MultipartFile file, VideoUploadRequest videoUploadRequest,
+                         MultipartFile thumbnail, Principal user) throws IOException {
         String uuid = UUID.randomUUID().toString();
         String originalFileName = uuid + "_" + videoUploadRequest.getTitle();
         Path originalFilePath = Paths.get("upload/videos/" + originalFileName);
