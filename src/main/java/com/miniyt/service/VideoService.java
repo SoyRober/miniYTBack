@@ -32,13 +32,9 @@ public class VideoService {
     }
 
     public List<VideoResponse> search(String searchTerm) {
-        System.out.println("searchTerm = " + searchTerm);
-        List<Video> videos;
-        if(searchTerm == null || searchTerm.isEmpty()) {
-            videos = videoRepo.findAll();
-        } else  {
-            videos = videoRepo.findByTitleContainingIgnoreCase(searchTerm);
-        }
+        List<Video> videos = searchTerm == null || searchTerm.isEmpty() ?
+                videoRepo.findAll() :
+                videoRepo.findByTitleContainingIgnoreCase(searchTerm);
 
         return videos.stream()
                 .map(video -> new VideoResponse(
