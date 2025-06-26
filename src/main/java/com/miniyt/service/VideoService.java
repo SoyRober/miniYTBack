@@ -35,7 +35,7 @@ public class VideoService {
         List<Video> videos = searchTerm == null || searchTerm.isEmpty() ?
                 videoRepo.findAll() :
                 videoRepo.findByTitleContainingIgnoreCase(searchTerm);
-
+        System.out.println("searchTerm = " + searchTerm);
         return videos.stream()
                 .map(video -> new VideoResponse(
                         video.getUuid(),

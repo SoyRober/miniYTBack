@@ -1,82 +1,68 @@
 package com.miniyt.service;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.interfaces.DecodedJWT;
+import com.auth0.jwt.interfaces.JWTVerifier;
 import com.miniyt.component.TokenProperties;
-import io.jsonwebtoken.*;
-import io.jsonwebtoken.Jwts.SIG;
-import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Service;
 
-import javax.crypto.SecretKey;
-import java.nio.charset.StandardCharsets;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.Function;
 
 @Service
 public class JwtService {
 
-    private final com.miniyt.component.TokenProperties tokenProperties;
-    private final SecretKey key;
+    private final TokenProperties tokenProperties;
+    private final Algorithm algorithm;
+    private final JWTVerifier verifier;
 
     public JwtService(TokenProperties tokenProperties) {
         this.tokenProperties = tokenProperties;
-        this.key = Keys.hmacShaKeyFor(tokenProperties.getSecret().getBytes(StandardCharsets.UTF_8));
+        this.algorithm = Algorithm.HMAC256(tokenProperties.getSecret());
+        this.verifier = JWT.require(algorithm).build();
     }
 
     public String extractUsername(String token) {
-        return extractClaim(token, Claims::getSubject);
+        return decodeToken(token).getSubject();
     }
 
-    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
-        final Claims claims = extractAllClaims(token);
-        return claimsResolver.apply(claims);
+    public String extractEmail(String token) {
+        return decodeToken(token).getClaim("email").asString();
     }
 
-    public Claims extractAllClaims(String token) {
-        return Jwts.parser()
-                .verifyWith(key).build()
-                .parseSignedClaims(token)
-                .getPayload();
+    public String extractRole(String token) {
+        return decodeToken(token).getClaim("role").asString();
     }
 
     public String generateToken(String username, String role, String email) {
-        Map<String, Object> extraClaims = new HashMap<>();
-        extraClaims.put("role", role);
-        extraClaims.put("email", email);
-        return createToken(extraClaims, username);
-    }
-
-    private String createToken(Map<String, Object> extraClaims, String subject) {
         long nowMillis = System.currentTimeMillis();
         Date now = new Date(nowMillis);
         Date expiry = new Date(nowMillis + tokenProperties.getExpiration());
 
-        return Jwts.builder()
-                .claims()
-                .add(extraClaims)
-                .subject(subject)
-                .issuedAt(now)
-                .expiration(expiry)
-                .and()
-                .signWith(key, SIG.HS256)
-                .compact();
+        return JWT.create()
+                .withSubject(username)
+                .withClaim("email", email)
+                .withClaim("role", role)
+                .withIssuedAt(now)
+                .withExpiresAt(expiry)
+                .sign(algorithm);
     }
 
     public boolean isTokenValid(String token, String username) {
         try {
-            final String extractedUsername = extractUsername(token);
-            return extractedUsername.equals(username) && !isTokenExpired(token);
-        } catch (JwtException e) {
+            DecodedJWT jwt = verifier.verify(token);
+            return jwt.getSubject().equals(username) && jwt.getExpiresAt().after(new Date());
+        } catch (JWTVerificationException e) {
             return false;
         }
     }
 
-    private boolean isTokenExpired(String token) {
-        return extractExpiration(token).before(new Date());
+    private DecodedJWT decodeToken(String token) {
+        return verifier.verify(token);
     }
 
     public Date extractExpiration(String token) {
-        return extractClaim(token, Claims::getExpiration);
+        return decodeToken(token).getExpiresAt();
     }
 }
