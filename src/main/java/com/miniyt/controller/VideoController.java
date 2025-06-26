@@ -29,10 +29,10 @@ public class VideoController {
     }
 
     @GetMapping("/public/search")
-    public ResponseEntity<ApiResponse> search(@RequestParam(required = false) String search) {
+    public ResponseEntity<ApiResponse> search(@RequestParam(required = false) String search, @RequestParam(required = true, defaultValue = "0") int page) {
         return ResponseEntity.ok(
                 new ApiResponse(
-                        videoService.search(search),
+                        videoService.search(search, page),
                         true
                 )
         );

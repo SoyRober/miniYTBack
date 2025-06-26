@@ -7,6 +7,8 @@ import com.miniyt.model.User;
 import com.miniyt.model.Video;
 import com.miniyt.repository.UserRepo;
 import com.miniyt.repository.VideoRepo;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -31,11 +33,13 @@ public class VideoService {
         this.userRepo = userRepo;
     }
 
-    public List<VideoResponse> search(String searchTerm) {
+    public List<VideoResponse> search(String searchTerm, int page) {
+        PageRequest pageRequest = PageRequest.of(page, 10);
+
         List<Video> videos = searchTerm == null || searchTerm.isEmpty() ?
-                videoRepo.findAll() :
-                videoRepo.findByTitleContainingIgnoreCase(searchTerm);
-        System.out.println("searchTerm = " + searchTerm);
+                videoRepo.findAll(pageRequest).getContent() :
+                videoRepo.findByTitleContainingIgnoreCase(searchTerm, pageRequest);
+
         return videos.stream()
                 .map(video -> new VideoResponse(
                         video.getUuid(),
