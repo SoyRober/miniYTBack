@@ -34,7 +34,7 @@ public class VideoService {
     }
 
     public List<VideoResponse> search(String searchTerm, int page) {
-        PageRequest pageRequest = PageRequest.of(page, 10);
+        PageRequest pageRequest = PageRequest.of(page, 22);
 
         List<Video> videos = searchTerm == null || searchTerm.isEmpty() ?
                 videoRepo.findAll(pageRequest).getContent() :
