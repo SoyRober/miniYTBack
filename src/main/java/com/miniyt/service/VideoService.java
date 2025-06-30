@@ -42,6 +42,7 @@ public class VideoService {
 
         return videos.stream()
                 .map(video -> new VideoResponse(
+                        video.getId(),
                         video.getUuid(),
                         video.getTitle(),
                         video.getDescription(),
@@ -108,6 +109,7 @@ public class VideoService {
     public VideoResponse getVideo(String uuid) {
         return videoRepo.findByUuid(uuid)
                 .map(video -> new VideoResponse(
+                        null,
                         video.getUuid(),
                         video.getTitle(),
                         video.getDescription(),
