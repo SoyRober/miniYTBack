@@ -27,14 +27,6 @@ public class JwtService {
         return decodeToken(token).getSubject();
     }
 
-    public String extractEmail(String token) {
-        return decodeToken(token).getClaim("email").asString();
-    }
-
-    public String extractRole(String token) {
-        return decodeToken(token).getClaim("role").asString();
-    }
-
     public String generateToken(String username, String role, String email) {
         long nowMillis = System.currentTimeMillis();
         Date now = new Date(nowMillis);
@@ -60,9 +52,5 @@ public class JwtService {
 
     private DecodedJWT decodeToken(String token) {
         return verifier.verify(token);
-    }
-
-    public Date extractExpiration(String token) {
-        return decodeToken(token).getExpiresAt();
     }
 }
