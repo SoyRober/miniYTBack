@@ -2,9 +2,9 @@ package com.miniyt.controller;
 
 import com.miniyt.dto.request.VideoUploadRequest;
 import com.miniyt.dto.response.ApiResponse;
+import com.miniyt.dto.response.VideoResponse;
 import com.miniyt.model.Video;
 import com.miniyt.service.VideoService;
-import jakarta.persistence.PreUpdate;
 import jakarta.validation.Valid;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
@@ -19,6 +19,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.Principal;
+import java.util.List;
 
 @RestController
 public class VideoController {
@@ -30,12 +31,11 @@ public class VideoController {
 
     @GetMapping("/public/search")
     public ResponseEntity<ApiResponse> search(@RequestParam(required = false) String search, @RequestParam(defaultValue = "0") int page) {
-        return ResponseEntity.ok(
-                new ApiResponse(
-                        videoService.search(search, page),
-                        true
-                )
-        );
+        List<VideoResponse> videos = videoService.search(search, page);
+
+        return videos.isEmpty() ?
+                ResponseEntity.ok(new ApiResponse("No videos found", false)) :
+                ResponseEntity.ok(new ApiResponse(videos, true));
     }
 
     @PostMapping(value = "/user/video/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
