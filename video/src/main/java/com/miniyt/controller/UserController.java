@@ -3,7 +3,6 @@ package com.miniyt.controller;
 import com.miniyt.dto.request.LoginRequest;
 import com.miniyt.dto.request.RegisterRequest;
 import com.miniyt.dto.response.ApiResponse;
-import com.miniyt.service.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

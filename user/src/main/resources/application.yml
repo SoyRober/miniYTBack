@@ -1,0 +1,16 @@
+# Server Port
+server:
+  port: 8080
+
+# JWT Configuration
+token:
+  secret: piowebdpiujqerbgipjerwbgjfdbjghiophfew0
+  expiration: 3600000000
+
+# MongoDB Configuration
+spring:
+  data:
+    mongodb:
+      uri: mongodb://mini_mongodb:27017/miniyt
+      username: admin
+      password: administratorAccountForMongo

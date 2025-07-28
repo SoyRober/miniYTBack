@@ -3,10 +3,11 @@ package com.miniyt.service;
 import com.miniyt.dto.request.VideoUploadRequest;
 import com.miniyt.dto.response.VideoResponse;
 import com.miniyt.exception.NonExistentEntityException;
-import com.miniyt.entity.User;
 import com.miniyt.entity.Video;
 import com.miniyt.repository.UserRepo;
 import com.miniyt.repository.VideoRepo;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,15 +23,11 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class VideoService {
 
     private final VideoRepo videoRepo;
     private final UserRepo userRepo;
-
-    public VideoService(VideoRepo videoRepo, UserRepo userRepo) {
-        this.videoRepo = videoRepo;
-        this.userRepo = userRepo;
-    }
 
     public List<VideoResponse> search(String searchTerm, int page) {
         PageRequest pageRequest = PageRequest.of(page, 22);

@@ -10,12 +10,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController
+@RestController("/api/auth")
 @RequiredArgsConstructor
 public class AuthController {
     private UserService userService;
 
-    @PostMapping("/public/login")
+    @PostMapping("/login")
     public ResponseEntity<ApiResponse> login(@RequestBody LoginRequest loginRequest) {
         return ResponseEntity.ok(
                 new ApiResponse(
@@ -25,7 +25,7 @@ public class AuthController {
         );
     }
 
-    @PostMapping("/public/register")
+    @PostMapping("/register")
     public ResponseEntity<ApiResponse> register(@RequestBody RegisterRequest registerRequest) {
         return ResponseEntity.ok(
                 new ApiResponse(

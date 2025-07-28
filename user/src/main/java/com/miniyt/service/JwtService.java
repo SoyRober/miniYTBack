@@ -6,22 +6,17 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.JWTVerifier;
 import com.miniyt.component.TokenProperties;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 
 @Service
+@RequiredArgsConstructor
 public class JwtService {
-
     private final TokenProperties tokenProperties;
     private final Algorithm algorithm;
     private final JWTVerifier verifier;
-
-    public JwtService(TokenProperties tokenProperties) {
-        this.tokenProperties = tokenProperties;
-        this.algorithm = Algorithm.HMAC256(tokenProperties.getSecret());
-        this.verifier = JWT.require(algorithm).build();
-    }
 
     public String extractUsername(String token) {
         return decodeToken(token).getSubject();

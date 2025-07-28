@@ -1,41 +1,39 @@
 package com.miniyt.entity;
 
-import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.data.annotation.Id; // Importar @Id de Spring Data
+import org.springframework.data.mongodb.core.index.Indexed; // Para índices únicos
+import org.springframework.data.mongodb.core.mapping.Document; // Para mapear a una colección
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
 @Data
+@Builder
+@Document
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
-@Builder
-@Table(
-        name = "user",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"username", "email"})
-)
 public class User implements UserDetails {
+
     public enum Role {
         USER,
         ADMIN
     }
 
     @Id
-    @GeneratedValue(strategy= GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
+    @Indexed(unique = true)
     private String username;
 
+    @Indexed(unique = true)
     private String email;
 
     private String password;
 
-    @Enumerated(EnumType.STRING)
     private Role role;
 
     @Override

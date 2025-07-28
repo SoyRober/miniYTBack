@@ -6,6 +6,8 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -16,20 +18,18 @@ import java.io.IOException;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-
-    private final JwtService jwtService;
     private final UserRepo userRepo;
+    private final JwtService jwtService;
 
-    public JwtAuthenticationFilter(JwtService jwtService, UserRepo userRepo) {
-        this.jwtService = jwtService;
+    public JwtAuthenticationFilter(UserRepo userRepo, JwtService jwtService) {
         this.userRepo = userRepo;
+        this.jwtService = jwtService;
     }
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        String path = request.getRequestURI();
-
-        return path.startsWith("/public/");
+        return request.getRequestURI() // Path
+                .startsWith("/public/");
     }
 
     @Override
