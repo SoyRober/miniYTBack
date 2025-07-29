@@ -9,9 +9,11 @@ import com.miniyt.exception.ShortAttributeException;
 import com.miniyt.entity.User;
 import com.miniyt.repository.UserRepo;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -32,6 +34,7 @@ public class UserService {
     }
 
     public String register(RegisterRequest registerRequest) {
+        log.info("Registering user with username: {}", registerRequest.username());
         if (userRepo.findByUsername(registerRequest.username()).isPresent())
             throw new AttributeAlreadyExistsException("This username is taken");
 
@@ -41,13 +44,19 @@ public class UserService {
         if (registerRequest.password().length() < 5)
             throw new ShortAttributeException("The password must be more than 5 characters");
 
+        log.info("Errores pasados");
+
         User newUser = new User();
         newUser.setUsername(registerRequest.username());
         newUser.setEmail(registerRequest.email());
         newUser.setRole(User.Role.USER);
         newUser.setPassword(passwordEncoder.encode(registerRequest.password()));
 
+        log.info("Usuario creado: {}", newUser.getUsername());
+
         userRepo.save(newUser);
+
+        log.info("Usuario guardado en la base de datos: {}", newUser.getUsername());
 
         return "User registered successfully";
     }

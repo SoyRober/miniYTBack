@@ -12,5 +12,3 @@ spring:
   data:
     mongodb:
       uri: mongodb://mini_mongodb:27017/miniyt
-      username: admin
-      password: administratorAccountForMongo

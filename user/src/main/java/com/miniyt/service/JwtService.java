@@ -7,10 +7,12 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.JWTVerifier;
 import com.miniyt.component.TokenProperties;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class JwtService {
@@ -23,9 +25,11 @@ public class JwtService {
     }
 
     public String generateToken(String username, String role, String email) {
+        log.info("Generating JWT token for user: {}", username);
         long nowMillis = System.currentTimeMillis();
         Date now = new Date(nowMillis);
         Date expiry = new Date(nowMillis + tokenProperties.getExpiration());
+        log.info("Token will expire at: {}", expiry);
 
         return JWT.create()
                 .withSubject(username)
